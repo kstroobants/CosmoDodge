@@ -32,6 +32,15 @@ EntityBase {
         height: parent.height
         bodyType: Body.Dynamic
         collisionTestingOnlyMode: true
+        fixture.onContactChanged: {
+            console.debug("Collision detected")
+            var otherEntity = other.getBody().target
+            var otherEntityType = otherEntity.entityType
+
+            if(otherEntityType === "asteroid") {
+                player.die()
+            }
+        }
     }
 
     MovementAnimation {
@@ -52,6 +61,12 @@ EntityBase {
         running: true
         minPropertyValue: scene.gameWindowAnchorItem.y
         maxPropertyValue: scene.height-player.height
+    }
+
+    function die() {
+        // reset position
+        player.x = scene.width / 2
+        player.y = 200
     }
 
 }
