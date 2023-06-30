@@ -22,13 +22,17 @@ GameWindow {
 
         sceneAlignmentY: "bottom"
 
+        // Forward keybaord access to the player
         Keys.forwardTo: player.controller
 
+        // Keep score
         property int score: 0
         property int scoreBest: 0
 
+        // Init the state
         state: "start"
 
+        // Set the background to an image
         Image {
             id: bg
             source: Qt.resolvedUrl("../assets/bgSpace.jpg")
@@ -37,12 +41,14 @@ GameWindow {
             anchors.bottom: scene.gameWindowAnchorItem.bottom
         }
 
+        // Add physics without gravity. Its needed to detect the collisions
         PhysicsWorld {
             debugDrawVisible: false
             updatesPerSecondForPhysics: 60
             gravity.y: 0
         }
 
+        // Init the player/rocket at the bottom when the game starts
         Player {
             id: player
             x: (scene.width / 2) - width/2
@@ -50,12 +56,14 @@ GameWindow {
             visible: scene.state !== "start"
         }
 
+        // Make 8 asteroids. The location is changed below
         Repeater {
             id: repeater
             model: 8
             Asteroid {}
         }
 
+        // Show the score when playing on the top
         Text {
             text: scene.score
             anchors.top: scene.gameWindowAnchorItem.top
@@ -65,18 +73,21 @@ GameWindow {
             visible: scene.state === "playing"
         }
 
+        // Make the play button clickable and it changes the game state
         MouseArea {
             id: mouseArea
             anchors.fill: playImg
             onClicked: {
-                if(scene.state === "start") { // if the game is ready and you click the screen we start the game
+                // if the game is ready and you click the button we start the game
+                if(scene.state === "start") {
                     scene.state = "playing"
                 }
-                if(scene.state === "gameOver") // if the player is dead and you click the screen we restart the game
-                {
+                // if the player is dead and you click the button we restart the game
+                if(scene.state === "gameOver") {
                     scene.state = "playing"
                 }
             }
+            // Add feeling that the button is pressable
             onPressed: {
                 playImg.opacity = 0.5
             }
@@ -85,6 +96,7 @@ GameWindow {
             }
         }
 
+        // Play button image at start and game over screen
         Image {
             id: playImg
             anchors.horizontalCenter: scene.horizontalCenter
@@ -92,6 +104,7 @@ GameWindow {
             visible: scene.state !== "playing"
         }
 
+        // Game name below the logo at start screen
         Image {
             id: startImgLogo
             anchors.bottom: startImgLogoText.top
@@ -101,6 +114,7 @@ GameWindow {
             visible: scene.state === "start"
         }
 
+        // Game logo at start screen
         Image {
             id: startImgLogoText
             anchors.bottom: playImg.top
@@ -110,6 +124,7 @@ GameWindow {
             visible: scene.state === "start"
         }
 
+        // Game over text shown when game is over
         Image {
             id: gameOverImg
             anchors.bottom: scoreBoard.top
@@ -119,6 +134,7 @@ GameWindow {
             visible: scene.state === "gameOver"
         }
 
+        // Scoreboard shown when game is over
         Rectangle {
             id: scoreBoard
             anchors.bottom: playImg.top
@@ -133,6 +149,7 @@ GameWindow {
             visible: scene.state === "gameOver"
         }
 
+        // Scoreboard text
         Text {
             text: "Score"
             anchors.right: scoreBoard.right
@@ -144,6 +161,7 @@ GameWindow {
             visible: scene.state === "gameOver"
         }
 
+        // Scoreboard text
         Text {
             text: "Best"
             anchors.left: scoreBoard.left
@@ -155,6 +173,7 @@ GameWindow {
             visible: scene.state === "gameOver"
         }
 
+        // Scoreboard text
         Text {
             text: scene.score
             anchors.right: scoreBoard.right
@@ -166,6 +185,7 @@ GameWindow {
             visible: scene.state === "gameOver"
         }
 
+        // Scoreboard text
         Text {
             text: scene.scoreBest
             anchors.left: scoreBoard.left
@@ -177,6 +197,7 @@ GameWindow {
             visible: scene.state === "gameOver"
         }
 
+        // Init the position of the asteroids and stop the movement
         function initAsteroids() {
             for(var i = 0; i < repeater.count; i++) {
                 var entity = repeater.itemAt(i);
@@ -186,6 +207,7 @@ GameWindow {
             }
         }
 
+        // Move the asteroids
         function moveAsteroids() {
             for(var i = 0; i < repeater.count; i++) {
                 var entity = repeater.itemAt(i);
@@ -193,17 +215,20 @@ GameWindow {
             }
         }
 
+        // Init the game
         function initGame() {
             scene.initAsteroids()
             player.stop()
         }
 
+        // Game is starting
         function playGame() {
             scene.moveAsteroids()
             player.start()
             scene.score = 0
         }
 
+        // Game over, update the best score
         function stopGame() {
             scene.initAsteroids()
             player.stop()
@@ -212,6 +237,7 @@ GameWindow {
             }
         }
 
+        // Run function when the game state changes
         states: [
             State {
                 name: "start"

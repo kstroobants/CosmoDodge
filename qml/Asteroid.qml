@@ -18,9 +18,10 @@ EntityBase {
         width: parent.width
         height: parent.height
         bodyType: Body.Dynamic
-        collisionTestingOnlyMode: true
+        collisionTestingOnlyMode: true // No external forces
     }
 
+    // Move the object from top to bottom with an increasing velocity
     MovementAnimation {
         id: moveY
         target: parent
@@ -30,17 +31,23 @@ EntityBase {
     }
 
     onYChanged: {
+        // Check if object passed the bottom of the screen
         if(y > scene.height) {
+            // Place the object back to the top
             y = -2.5*scene.height
             x = utils.generateRandomValueBetween(0, scene.width-width)
+
+            // Increase the score as it is dodged
             scene.score += 1
         }
     }
 
+    // Stop the movevement of the object
     function stop() {
         moveY.stop()
     }
 
+    // Start the movevement of the object
     function start() {
         moveY.start()
     }
