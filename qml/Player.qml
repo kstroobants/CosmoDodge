@@ -4,7 +4,7 @@ import QtQuick 2.0
 EntityBase {
     id: player
     entityType: "player"
-    width: 48
+    width: 20
     height: 48
 
     GameSpriteSequence {
@@ -14,9 +14,9 @@ EntityBase {
         GameSprite {
             frameCount: 2
             frameRate: 5
-            frameWidth: 48
+            frameWidth: 20
             frameHeight: 48
-            source: Qt.resolvedUrl("../assets/shipSprite2.png")
+            source: Qt.resolvedUrl("../assets/shipSprite.png")
         }
     }
 
@@ -33,10 +33,8 @@ EntityBase {
         bodyType: Body.Dynamic
         collisionTestingOnlyMode: true
         fixture.onContactChanged: {
-            console.debug("Collision detected")
             var otherEntity = other.getBody().target
             var otherEntityType = otherEntity.entityType
-
             if(otherEntityType === "asteroid") {
                 player.die()
             }
@@ -48,7 +46,7 @@ EntityBase {
         target: parent
         property: "x"
         velocity: twoAxisController.xAxis*250
-        running: true
+        running: false
         minPropertyValue: scene.gameWindowAnchorItem.x
         maxPropertyValue: scene.width-player.width
     }
@@ -58,15 +56,29 @@ EntityBase {
         target: parent
         property: "y"
         velocity: - twoAxisController.yAxis*250
-        running: true
+        running: false
         minPropertyValue: scene.gameWindowAnchorItem.y
         maxPropertyValue: scene.height-player.height
     }
 
+    // die and restart game
     function die() {
         // reset position
-        player.x = scene.width / 2
+        player.x = (scene.width / 2) - player.width/2
         player.y = 200
+        scene.state = "gameOver"
+    }
+
+    function stop() {
+        moveX.stop()
+        moveY.stop()
+        ship.running = false
+    }
+
+    function start() {
+        moveX.start()
+        moveY.start()
+        ship.running = true
     }
 
 }

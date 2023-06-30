@@ -25,15 +25,24 @@ EntityBase {
         id: moveY
         target: parent
         property: "y"
-        velocity: 150
-        running: true
+        velocity: 150 + 5*scene.score
+        running: false
     }
 
     onYChanged: {
         if(y > scene.height) {
             y = -2.5*scene.height
             x = utils.generateRandomValueBetween(0, scene.width-width)
+            scene.score += 1
         }
+    }
+
+    function stop() {
+        moveY.stop()
+    }
+
+    function start() {
+        moveY.start()
     }
 
 }
